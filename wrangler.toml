@@ -1,0 +1,8 @@
+name = "panapheus"
+main = "worker.js"
+compatibility_date = "2026-07-20"
+
+[[d1_databases]]
+binding = "PANAPHEUS_DB"
+database_name = "panapheus-state"
+database_id = "b062d559-a3c1-47f2-82d8-480b83f56b1b"
