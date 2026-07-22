@@ -67,7 +67,7 @@ const thanksBody = JSON.stringify({
     user: 'U123',
     ts: '124.456',
     thread_ts: '123.456',
-    text: 'thx'
+    text: 'thx pan'
   }
 });
 const thanksPost = await worker.fetch(await signedRequest(thanksBody, 'application/json'), env, ctx);
@@ -80,6 +80,22 @@ assert.equal(calls[1].url, 'https://slack.com/api/chat.postMessage');
 assert.equal(calls[1].body.channel, 'C123');
 assert.equal(calls[1].body.thread_ts, '123.456');
 assert.match(calls[1].body.text, /---\nuses every letter\nby <@U123>$/);
+
+calls.length = 0;
+const looseThanksBody = JSON.stringify({
+  type: 'event_callback',
+  event: {
+    type: 'message',
+    channel: 'C123',
+    user: 'U123',
+    ts: '125.456',
+    thread_ts: '123.456',
+    text: 'thanks'
+  }
+});
+const looseThanksPost = await worker.fetch(await signedRequest(looseThanksBody, 'application/json'), env, ctx);
+assert.equal(looseThanksPost.status, 200);
+assert.equal(calls.length, 0);
 
 const get = await worker.fetch(new Request('https://panapheus.test/state', {
   headers: { authorization: 'Bearer state-secret' }
