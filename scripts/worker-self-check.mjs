@@ -80,6 +80,7 @@ assert.equal(calls[1].url, 'https://slack.com/api/chat.postMessage');
 assert.equal(calls[1].body.channel, 'C123');
 assert.equal(calls[1].body.thread_ts, '123.456');
 assert.match(calls[1].body.text, /---\nuses every letter\nby <@U123>$/);
+assert.deepEqual(calls[1].body.blocks[1], { type: 'divider' });
 
 calls.length = 0;
 const looseThanksBody = JSON.stringify({

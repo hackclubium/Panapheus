@@ -357,7 +357,12 @@ async function handleThankYou(env, event) {
   await slack(env, 'chat.postMessage', {
     channel: event.channel,
     thread_ts: event.thread_ts,
-    text: `${trigger.text}\n---\nuses every letter\nby <@${event.user}>`
+    text: `${trigger.text}\n---\nuses every letter\nby <@${event.user}>`,
+    blocks: [
+      { type: 'section', text: { type: 'mrkdwn', text: trigger.text } },
+      { type: 'divider' },
+      { type: 'context', elements: [{ type: 'mrkdwn', text: `uses every letter\nby <@${event.user}>` }] }
+    ]
   });
   await dbDelete(env, `pangram:${event.thread_ts}`).catch(() => {});
   await recordMessageDiagnostic(env, { type: 'thank_you', trigger: trigger.name, channel: event.channel, user: event.user, at: new Date().toISOString() });
