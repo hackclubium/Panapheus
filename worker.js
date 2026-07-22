@@ -316,14 +316,14 @@ async function processPangramMessage(env, message) {
   const analysis = analyzePangram(message.text);
   if (!analysis.ok) return { ok: false, reason: 'not_pangram', analysis };
 
-  const pangram = message.text;
+  const pangram = displayText(message.text);
   await Promise.all([
     slack(env, 'chat.postMessage', {
       channel: message.channel,
       thread_ts: message.ts,
       text: `${pangram}\n---\nuses every letter\n– a pangram by <@${message.user}>, ${new Date().getUTCFullYear()}`,
       blocks: [
-        { type: 'section', text: { type: 'mrkdwn', text: pangram } },
+        { type: 'section', text: { type: 'plain_text', text: pangram } },
         { type: 'divider' },
         { type: 'context', elements: [{ type: 'mrkdwn', text: `uses every letter\n– a pangram by <@${message.user}>, ${new Date().getUTCFullYear()}` }] }
       ],
@@ -359,7 +359,7 @@ async function handleThankYou(env, event) {
     thread_ts: event.thread_ts,
     text: `${trigger.text}\n---\nuses every letter\nby <@${event.user}>`,
     blocks: [
-      { type: 'section', text: { type: 'mrkdwn', text: trigger.text } },
+      { type: 'section', text: { type: 'plain_text', text: displayText(trigger.text) } },
       { type: 'divider' },
       { type: 'context', elements: [{ type: 'mrkdwn', text: `uses every letter\nby <@${event.user}>` }] }
     ]
@@ -371,6 +371,12 @@ async function handleThankYou(env, event) {
 
 function thankYouTrigger(text) {
   return TRIGGER_RESPONSES.find((trigger) => trigger.pattern.test(text));
+}
+
+function displayText(text) {
+  return text
+    .replace(/(^|\n)>\s?/g, '$1')
+    .replace(/[*_~]/g, '');
 }
 
 async function markPangram(env, threadTs) {

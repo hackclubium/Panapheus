@@ -24,14 +24,14 @@ export async function main() {
       const analysis = analyzePangram(message.text ?? '');
       if (!analysis.ok) continue;
       if ((message.reactions ?? []).some((reaction) => reaction.name === pangramReaction)) continue;
-      const pangram = message.text ?? '';
+      const pangram = displayText(message.text ?? '');
 
       await slack(token, 'chat.postMessage', {
         channel,
         thread_ts: message.ts,
         text: `${pangram}\n---\nuses every letter\n– a pangram by <@${message.user}>, ${new Date().getUTCFullYear()}`,
         blocks: [
-          { type: 'section', text: { type: 'mrkdwn', text: pangram } },
+          { type: 'section', text: { type: 'plain_text', text: pangram } },
           { type: 'divider' },
           { type: 'context', elements: [{ type: 'mrkdwn', text: `uses every letter\n– a pangram by <@${message.user}>, ${new Date().getUTCFullYear()}` }] }
         ],
@@ -73,4 +73,10 @@ function mustEnv(name) {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is required`);
   return value;
+}
+
+function displayText(text) {
+  return text
+    .replace(/(^|\n)>\s?/g, '$1')
+    .replace(/[*_~]/g, '');
 }
