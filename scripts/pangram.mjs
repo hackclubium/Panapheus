@@ -17,7 +17,7 @@ export function analyzePangram(text) {
 
 function stripSlackNoise(text) {
   return text
-    .replace(/<https?:\/\/[^|>]+\|([^>]+)>/g, '$1')
+    .replace(/<https?:\/\/[^|>]+\|[^>]+>/g, ' ')
     .replace(/https?:\/\/\S+/g, ' ')
     .replace(/<[@#!][A-Z0-9][^>]*>/g, ' ')
     .replace(/<![^>]+>/g, ' ')
