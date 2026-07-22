@@ -44,7 +44,7 @@ const eventBody = JSON.stringify({
     channel: 'C123',
     user: 'U123',
     ts: '123.456',
-    text: '*The* _quick_ ~brown~ fox jumps over the lazy dog'
+    text: '*The* _quick_ ~brown~ fox jumps over the lazy dog https://example.com <https://example.com|label>'
   }
 });
 const eventPost = await worker.fetch(await signedRequest(eventBody, 'application/json'), env, ctx);
@@ -54,7 +54,7 @@ assert.equal(calls.length, 3);
 assert.equal(calls[0].url, 'https://slack.com/api/chat.postMessage');
 assert.match(calls[0].body.text, /uses every letter/);
 assert.equal(calls[0].body.blocks[0].text.type, 'plain_text');
-assert.equal(calls[0].body.blocks[0].text.text, 'The quick brown fox jumps over the lazy dog');
+assert.equal(calls[0].body.blocks[0].text.text, 'The quick brown fox jumps over the lazy dog label');
 assert.equal(calls[1].url, 'https://slack.com/api/reactions.add');
 assert.deepEqual(calls[1].body, { channel: 'C123', timestamp: '123.456', name: 'abc' });
 assert.equal(calls[2].url, 'https://slack.com/api/chat.postEphemeral');
